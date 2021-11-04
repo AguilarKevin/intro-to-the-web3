@@ -8,34 +8,28 @@ import "hardhat/console.sol";
 import { Base64 } from "./libraries/Base64.sol";
 
 
-
-// We inherit the contract we imported. This means we'll have access
-// to the inherited contract's methods.
 contract MyEpicNFT is ERC721URIStorage {
-	// Magic given to us by OpenZeppelin to help us keep track of tokenIds.
+
 	using Counters for Counters.Counter;
 	Counters.Counter private _tokenIds;
 
 
-	// This is our SVG code. All we need to change is the word that's displayed. Everything else stays the same.
-  // So, we make a baseSvg variable here that all our NFTs can use.
   string baseSvg = "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 350 350'><style>.base { fill: black; font-weight:bold; letter-spacing: -0.085em; font-family: arial; font-size: 180% }</style><defs><linearGradient id='myGradient' gradientTransform='rotate(90)'><stop offset='5%'  stop-color='#fc00ff' /><stop offset='95%' stop-color='#00dbde' /></linearGradient></defs><rect width='100%' height='100%' fill='url(#myGradient)'/><text x='50%' y='50%' class='base' dominant-baseline='middle' text-anchor='middle'>";
 
-  // I create three arrays, each with their own theme of random words.
-  // Pick some random funny words, names of anime characters, foods you like, whatever!
   string[] firstWords = ["Lxrd", "STXP", "$TFU", "Mxrbid", "Hxpe", "Chaxs", 'Crash'];
   string[] secondWords = ["Hexada", "Starshot", "Andromeda", "Cannis", "Attack", "Chxke"];
   string[] thirdWords = ["Invaders", "Candy", "Love", "Hate", "Heart", "Leeches"];
 
-	// We need to pass the name of our NFTs token and it's symbol.
+  event NewEpicNFTMinted(address sender, uint256 tokenId);
+
 	constructor() ERC721 ("SquareNFT", "SQUARE") {
 		console.log("This is my NFT contract. Woah!");
 	}
 
 	function pickRandomFirstWord(uint256 tokenId) public view returns (string memory) {
-    // I seed the random generator. More on this in the lesson.
+
     uint256 rand = random(string(abi.encodePacked("FIRST_WORD", Strings.toString(tokenId))));
-    // Squash the # between 0 and the length of the array to avoid going out of bounds.
+
     rand = rand % firstWords.length;
     return firstWords[rand];
   }
@@ -92,18 +86,13 @@ contract MyEpicNFT is ERC721URIStorage {
         abi.encodePacked("data:application/json;base64,", json)
     );
 
-    console.log("\n--------------------");
-    console.log(finalTokenUri);
-    console.log("--------------------\n");
-
     _safeMint(msg.sender, newItemId);
 
-    // Update your URI!!!
     _setTokenURI(newItemId, finalTokenUri);
 
     _tokenIds.increment();
-    console.log("An NFT w/ ID %s has been minted to %s", newItemId, msg.sender);
-	}
 
+    emit NewEpicNFTMinted(msg.sender, newItemId);
+	}
 
 }
