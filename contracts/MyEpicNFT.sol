@@ -21,7 +21,11 @@ contract MyEpicNFT is ERC721URIStorage {
 		console.log("This is my NFT contract. Woah!");
 	}
 	function makeAnEpicNFT(string memory firstWord, string memory secondWord, string memory thirdWord) public {
-		uint256 newItemId = _tokenIds.current();
+    console.log(_tokenIds.current());
+    _tokenIds.increment();
+		uint256 newItemId = _tokenIds.current() - 1;
+    console.log(newItemId);
+    console.log(_tokenIds.current());
 
 
 		string memory combinedWord = string(abi.encodePacked(firstWord, secondWord, thirdWord));
@@ -55,9 +59,12 @@ contract MyEpicNFT is ERC721URIStorage {
 
     _setTokenURI(newItemId, finalTokenUri);
 
-    _tokenIds.increment();
-
     emit NewEpicNFTMinted(msg.sender, newItemId);
 	}
+
+  function tokenCounter() public view returns (uint256) {
+    return _tokenIds.current();
+  }
+
 
 }
